@@ -1,0 +1,10 @@
+3th:
+
+- pip install panda3d - #метод 3д
+- pip install pandas
+- pip install scikit-learn
+- pip install kivy
+
+2th:
+
+- pip3 install pyqt5
