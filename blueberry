@@ -8,3 +8,6 @@
 2th:
 
 - pip3 install pyqt5
+
+
+- pip install flask
