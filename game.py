@@ -6,6 +6,18 @@ from PIL import Image
 from lab import  lab_map, draw_lab, player_position, goal_position
 from vor import Enemy, img_enemy1, img_enemy2, img_enemy3
 
+#сцена
+width = 800
+height = 600
+back = pygame.display.set_mode((width, height))
+
+pygame.display.set_caption('The Draconic Age')
+icon = pygame.image.load('Dragon.png')
+pygame.display.set_icon(icon)
+
+pygame.init()
+pygame.mixer.init()
+
 #Зображення
 def load_tif_image(path, size):
     img = Image.open(path)
@@ -16,23 +28,27 @@ def load_tif_image(path, size):
     return pygame.transform.smoothscale(surface, size)
 
 def load_images():
-    main_menu = load_tif_image('img/Цей бешкетник може бути де завгодно! (1).tif', (800, 600))
-    menu_game = load_tif_image('img/menu_game.tif', (800, 600))
-    game_one = load_tif_image('img/game1/lab_one.tif', (800, 600))
-    game_two = load_tif_image('img/game1/lab_one.tif', (800, 600))
-    return main_menu, menu_game
+    main_menu_bg = load_tif_image('img/Цей бешкетник може бути де завгодно! (1).tif', (800, 600))
+    menu_game_bg = load_tif_image('img/menu_game.tif', (800, 600))
+    game1_bg = load_tif_image('img/game1/lab_one.tif', (800, 600))
+    game2_bg = load_tif_image('img/game1/lab_one.tif', (800, 600))
+    return main_menu_bg, menu_game_bg, game1_bg, game2_bg
 
-#сцена
-width = 800
-height = 600
-back = pygame.display.set_mode((width, height))
+main_menu_bg, main_game_bg, game1_bg, game2_bg = load_images()
 
-pygame.display.set_caption('The Draconic Age')
-icon = pygame.image.load('code/Dragon.png')
-pygame.display.set_icon(icon)
+# score_manager.py
+def load_score(path='res/txt/score.txt'):
+    try:
+        with open(path, 'r') as f:
+            return int(f.read())
+    except FileNotFoundError:
+        return 0
 
-pygame.init()
-pygame.mixer.init()
+def save_score(score, path='res/txt/score.txt'):
+    with open(path, 'w') as f:
+        f.write(str(score))
+
+
 
 #шрифт
 import pygame
@@ -46,6 +62,7 @@ def load_fonts():
     font10 = load_font(font_path, 24)
     return font8, font9, font10
 
+font8, font9, font10 = load_fonts()
 #змінні
 white = (255, 255, 255)
 black = (0,0,0)
@@ -125,9 +142,10 @@ def return_to_main_menu():
     main_menu()
 
 def main_menu():
+
     while True:
         back.fill(white)
-        back.blit(main_menu(), (0, 0))
+        back.blit(main_menu_bg, (0, 0))
         button_x = width - 220
         buttonSet_y = 450
 
@@ -146,15 +164,17 @@ def main_menu():
                         pygame.quit()
                         print("Info")
                         sys.exit()
-
-pygame.display.update()
+                        back.blit(img, (0, 0))
+                        pygame.display.update()
 
 
 #меню ігр
 def start_back():
     while True:
-        back.blit(main_menu,(0,0))
-        #back.fill((240, 240, 240))
+
+
+        back.fill((240, 240, 240))
+        back.blit(main_menu, (0, 0))
         font_big = pygame.font.SysFont(None, 80)
         text = font_big.render('', True, (50, 50, 50))
         text_rect = text.get_rect(center=(width // 2, height // 2))
@@ -180,7 +200,7 @@ pygame.display.update()
 
 #меню лабіринт
 def start1_back():
-    global score
+    global score, session_score, total_score
     lab_image = pygame.image.load('img/inf.jpg')
     lab_image = pygame.transform.scale(lab_image, (800, 800))
     score = 0
@@ -224,66 +244,28 @@ def start1_back():
 pygame.display.update()
 
 def game_one():
-    global score
-    while True:
-    back.blit(game_one, (0, 0))
-
-    enemies.update()
-    enemies.draw(back)
-
-    draw_lab(back, lab_map)
-    raw_score(back)
-
-    add_score(10)
-    session_score += 10
-    total_score += 10
-
-    if player_reaches_goal(player_position, goal_position):
-        add_score(50)
-        session_score += 50
-        total_score += 50
-
-
-        save_score(total_score)
-        print('За сессію:', session_score)
-        print('всього:', total_score)
-
-        text = font9.render('', True, (50, 50, 50))
-        text_rect = text.get_rect(center=(width // 2, height // 2))
-        back.blit(text, text_rect)
-        draw_button('Menu', width // 2 - 365, height // 2 - 200, 100, 50, (63, 91, 120), (200, 200, 200),return_to_main_menu)
-        draw_circle_button('?', width // 2 - 350, height // 2 + 200, 30, (100, 200, 100), open_que)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    return
-
-pygame.display.update()
-
-#
-def game_two():
     global score, session_score, total_score
     session_score = 0
-        while True:
-            back.blit(game_two, (0, 0))
+    frame_counter = 0
+    while True:
+        back.blit(game1_bg, (0, 0))
 
-            enemies.update()
-            enemies.draw(back)
+        enemies.update()
+        enemies.draw(back)
 
-            draw_lab(back, lab_map)
-            raw_score(back)
+        draw_lab(back, lab_map)
+        draw_score(back)
 
+        frame_counter += 1
+        if frame_counter % 60 == 0:
             add_score(10)
             session_score += 10
             total_score += 10
 
-            if player_reaches_goal(player_position, goal_position):
-                add_score(50)
-                session_score += 50
-                total_score += 50
+        if player_reaches_goal(player_position, goal_position):
+            add_score(50)
+            session_score += 50
+            total_score += 50
 
             save_score(total_score)
             print('За сессію:', session_score)
@@ -292,17 +274,69 @@ def game_two():
             text = font9.render('', True, (50, 50, 50))
             text_rect = text.get_rect(center=(width // 2, height // 2))
             back.blit(text, text_rect)
-            draw_button('Menu', width // 2 - 365, height // 2 - 200, 100, 50, (63, 91, 120), (200, 200, 200),return_to_main_menu)
+            pygame.display.update()
+            draw_button('Menu', width // 2 - 365, height // 2 - 200, 100, 50, (63, 91, 120), (200, 200, 200),
+                        return_to_main_menu)
             draw_circle_button('?', width // 2 - 350, height // 2 + 200, 30, (100, 200, 100), open_que)
 
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
                         return
 
-pygame.display.update()
+            pygame.display.update()
+
+
+
+#
+def game_two():
+    global score, session_score, total_score
+    session_score = 0
+    frame_counter = 0
+    while True:
+        back.blit(game2_bg, (0, 0))
+
+        enemies.update()
+        enemies.draw(back)
+        draw_lab(back, lab_map)
+        draw_score(back)
+        frame_counter += 1
+        if frame_counter % 60 == 0:
+            add_score(10)
+            session_score += 10
+            total_score += 10
+
+        if player_reaches_goal(player_position, goal_position):
+            add_score(50)
+            session_score += 50
+            total_score += 50
+
+            save_score(total_score)
+            print('За сессію:', session_score)
+            print('всього:', total_score)
+
+            text = font9.render('', True, (50, 50, 50))
+            text_rect = text.get_rect(center=(width // 2, height // 2))
+            back.blit(text, text_rect)
+
+            draw_button('Menu', width // 2 - 365, height // 2 - 200, 100, 50, (63, 91, 120), (200, 200, 200),return_to_main_menu)
+            draw_circle_button('?', width // 2 - 350, height // 2 + 200, 30, (100, 200, 100), open_que)
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+
+            pygame.display.update()
+
 
 
 #переклад
@@ -379,6 +413,8 @@ def settings_back():
                 if event.key == pygame.K_ESCAPE:
                     return
 
+        pygame.display.update()
+
 def load_music():
     try:
         pygame.mixer.music.load(music_path)
@@ -387,7 +423,7 @@ def load_music():
     except pygame.error as e:
         print("Could not load music:", e)
 
-        pygame.display.update()
+pygame.display.update()
 
 
 #коіни та відображення
@@ -410,7 +446,7 @@ def add_score(points):
 
 def draw_score(surface):
     #font = pygame.font.SysFont(None, 40)  # Выбираем шрифт
-    score_text = font8.render(f"Score: {score}", True, (255,255,255))
+    score_text = font8.render(f"Score: {total_score}", True, (255,255,255))
     surface.blit(score_text, (10, 10))
 
 def scoreS():
@@ -464,7 +500,7 @@ def show_queue_window():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     window_open = False
-        pygame.display.update()
+
 
 #правила
 def info_back():
@@ -504,7 +540,6 @@ def info_back():
                         1] <= height - 100 + 50:
                         toggle_language()
 
-        pygame.display.update()
 
 def settings_back():
 
@@ -535,6 +570,7 @@ def settings_back():
                     return
 
         pygame.display.update()
+
 
 
 load_music()
