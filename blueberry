@@ -15,3 +15,4 @@
 - pip install fastapi
 - pip install "uvicorn[standard]"
     cd [name]
+uvicorn main:app --reload
