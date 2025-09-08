@@ -16,3 +16,19 @@
 - pip install "uvicorn[standard]"
     cd [name]
 uvicorn main:app --reload
+
+- pip install 
+- pip install passlib[bcrypt]
+
+
+# pip install "uvicorn[standard]"
+# uvicorn main:app --reload
+# main - назва вашого файлу
+
+# pip install python-multipart
+# pip install "python-jose[cryptography]"
+# pip install "passlib[bcrypt]"
+
+# python-multipart → потрібна для обробки форм у POST-запитах, особливо для OAuth2PasswordRequestForm у FastAPI.
+# python-jose[cryptography] → реалізація JWT-токенів (шифрування, підпис, декодування).
+# passlib[bcrypt] → для хешування паролів б
