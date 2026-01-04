@@ -32,3 +32,18 @@ uvicorn main:app --reload
 # python-multipart → потрібна для обробки форм у POST-запитах, особливо для OAuth2PasswordRequestForm у FastAPI.
 # python-jose[cryptography] → реалізація JWT-токенів (шифрування, підпис, декодування).
 # passlib[bcrypt] → для хешування паролів б
+
+
+#python manage.py runserver
+#cd vetcat_project
+ pip install django
+
+#python manage.py makemigrations
+#python manage.py migrate
+#python manage.py loaddata fixtures_vetcat.json
+#python manage.py shell
+#from school.models import Breed, Owner, Cat
+#Breed.objects.all()
+#Owner.objects.all()
+#Cat.objects.all()
+
