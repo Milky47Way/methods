@@ -47,3 +47,16 @@ uvicorn main:app --reload
 #Owner.objects.all()
 #Cat.objects.all()
 
+
+
+django-admin startproject school
+cd school 
+python manage.py startapp accounts
+python manage.py startapp blog 
+python manage.py startapp education
+
+
+
+
+
+
