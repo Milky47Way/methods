@@ -60,4 +60,5 @@ python manage.py migrate
 
 
  python manage.py createsuperuser
+ python import_characters.py
 
